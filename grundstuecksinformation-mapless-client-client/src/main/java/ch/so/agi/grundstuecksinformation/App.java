@@ -59,7 +59,8 @@ public class App implements EntryPoint {
 
     // Application settings
     private String myVar;
-    private String SEARCH_SERVICE_URL = "https://geo.so.ch/api/search/v2/?filter=ch.so.agi.av.gebaeudeadressen.gebaeudeeingaenge,ch.so.agi.av.grundstuecke.rechtskraeftig,ch.so.agi.av.grundstuecke.projektierte&searchtext=";    
+    //private String SEARCH_SERVICE_URL = "https://geo.so.ch/api/search/v2/?filter=ch.so.agi.av.gebaeudeadressen.gebaeudeeingaenge,ch.so.agi.av.grundstuecke.rechtskraeftig,ch.so.agi.av.grundstuecke.projektierte&searchtext=";    
+    private String SEARCH_SERVICE_URL = "https://geo.so.ch/api/search/v2/?filter=ch.so.agi.av.gebaeudeadressen.gebaeudeeingaenge,ch.so.agi.av.grundstuecke.rechtskraeftig&searchtext=";    
     private String DATA_SERVICE_URL = "https://geo.so.ch/api/data/v1/";
     private String OEREB_SERVICE_URL = "https://geo.so.ch/api/oereb/extract/reduced/pdf/";
     private String OEREB_WEB_URL = "https://geo.so.ch/map/?oereb_egrid=";
@@ -435,5 +436,4 @@ public class App implements EntryPoint {
             }
         }
     }
-
 }
