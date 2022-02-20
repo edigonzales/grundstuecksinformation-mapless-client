@@ -62,3 +62,42 @@ a.default-link:visited {
     margin-top: 40px;
     margin-bottom: 30px;
 }
+
+.dropdown-menu {
+    /*max-height: 600px !important;*/
+}
+
+#dataset-table {
+    font-size: 16px;
+}
+
+.bg-l-4-grey {
+    color: #999999 !important;
+    font-weight: 300 !important;
+}
+
+.bg-l-3-grey {
+    color: #666666 !important;
+    font-weight: 300 !important;
+}
+
+.bg-l-2-grey {
+    color: #FFFFFF !important;
+    background-color: #c62828;
+    font-weight: 300 !important;
+}
+
+a.badge-link {
+    color: #333333;  
+    text-decoration: none !important;       
+}
+
+a.badge-link:hover {
+    color: #333333; 
+    text-decoration: none !important;                
+}
+
+a.badge-link:visited {
+    color: #333333;  
+    text-decoration: none !important;              
+}
