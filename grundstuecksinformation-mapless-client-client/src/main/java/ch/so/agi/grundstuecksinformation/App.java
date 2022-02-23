@@ -26,8 +26,8 @@ import org.dominokit.domino.ui.style.ColorScheme;
 import org.dominokit.domino.ui.themes.Theme;
 import org.dominokit.domino.ui.utils.HasSelectionHandler.SelectionHandler;
 import org.dominokit.domino.ui.utils.TextNode;
-import org.eclipse.jetty.util.log.Log;
 import org.gwtproject.safehtml.shared.SafeHtmlUtils;
+import org.jboss.elemento.EventType;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.i18n.client.NumberFormat;
@@ -39,6 +39,7 @@ import elemental2.core.JsString;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.Event;
 import elemental2.dom.EventListener;
+import elemental2.dom.KeyboardEvent;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.Headers;
@@ -82,7 +83,7 @@ public class App implements EntryPoint {
 
     private HTMLElement container;
     private HTMLElement topLevelContent;
-    private SuggestBox suggestBox;
+    private SuggestBox<?> suggestBox;
     private List<Grundstueck> grundstuecke;
     private LocalListDataStore<Grundstueck> listStore;
     private DataTable<Grundstueck> datasetTable;
@@ -140,6 +141,8 @@ public class App implements EntryPoint {
         SuggestBoxStore dynamicStore = new SuggestBoxStore() {
             @Override
             public void filter(String value, SuggestionsHandler suggestionsHandler) {
+            	console.log("filter");
+            	
                 if (value.trim().length() == 0) {
                     return;
                 }
@@ -202,21 +205,32 @@ public class App implements EntryPoint {
                 });
             }
 
-            @Override
-            public void find(Object searchValue, Consumer handler) {
-                if (searchValue == null) {
-                    return;
-                }
-                HTMLInputElement el = (HTMLInputElement) suggestBox.getInputElement().element();
-                SearchResult searchResult = (SearchResult) searchValue;
-                SuggestItem<SearchResult> suggestItem = SuggestItem.create(searchResult, el.value);
-                handler.accept(suggestItem);
-            }
+			@Override
+			public void find(Object searchValue, Consumer handler) {
+				// TODO Auto-generated method stub
+				
+			}
+
+//            @Override
+//            public void find(Object searchValue, Consumer handler) {
+//            	console.log("find");
+//
+//                if (searchValue == null) {
+//                    return;
+//                }
+//                HTMLInputElement el = (HTMLInputElement) suggestBox.getInputElement().element();
+//                SearchResult searchResult = (SearchResult) searchValue;
+//                SuggestItem<SearchResult> suggestItem = SuggestItem.create(searchResult, el.value);
+//                console.log("sR: " + searchResult.getDisplay());
+//                console.log("el: " + el.value);
+//                console.log("suggestItem: " + suggestItem.getDisplayValue());
+//                handler.accept(suggestItem);
+//            }
         };
         
         suggestBox = SuggestBox.create("Suche: Grundstücke und Adressen", dynamicStore);
         suggestBox.addLeftAddOn(Icons.ALL.search());
-        suggestBox.setAutoSelect(false);
+        suggestBox.setAutoSelect(true);
         suggestBox.setFocusColor(Color.RED_DARKEN_3);
         suggestBox.setFocusOnClose(false);
 
@@ -243,6 +257,32 @@ public class App implements EntryPoint {
         suggestionsMenu.setSearchable(false);
         
         suggestBox.addSelectionHandler(new MySelectionHandler());
+        
+//        suggestBox.addClickListener(new EventListener() {
+//
+//			@Override
+//			public void handleEvent(Event evt) {
+//				console.log("click listener");
+//			}
+//        });
+        
+        
+//        suggestBox.addEventListener(EventType.keydown, new EventListener() {
+//			@Override
+//			public void handleEvent(Event evt) {
+//				console.log("**keydown");
+//				KeyboardEvent keyboardEvent = (KeyboardEvent) evt;
+//				if (keyboardEvent.code.equalsIgnoreCase("enter")) {
+//					console.log(keyboardEvent.char_);
+//					console.log(keyboardEvent.keyIdentifier);
+//					console.log(keyboardEvent.key);
+//	                HTMLInputElement el =(HTMLInputElement) suggestBox.getInputElement().element();
+//	                console.log("keydown -- element value: " + el.value);    
+//				}	
+//			}
+//        });
+        
+        
 
         topLevelContent.appendChild(div().id("search-panel").add(div().id("suggestbox-div").add(suggestBox)).element());
 
@@ -254,8 +294,8 @@ public class App implements EntryPoint {
                         .textAlign("left").setCellRenderer(cell -> TextNode.of(cell.getTableRow().getRecord().getDisplay())))
                 .addColumn(ColumnConfig.<Grundstueck>create("type", "Grundstücksart").setShowTooltip(false)
                         .textAlign("left").setCellRenderer(cell -> TextNode.of(cell.getTableRow().getRecord().getType())))
-                .addColumn(ColumnConfig.<Grundstueck>create("type", "Rechtsstatus").setShowTooltip(false)
-                        .textAlign("left").setCellRenderer(cell -> TextNode.of(cell.getTableRow().getRecord().getLawStatus())))
+//                .addColumn(ColumnConfig.<Grundstueck>create("type", "Rechtsstatus").setShowTooltip(false)
+//                        .textAlign("left").setCellRenderer(cell -> TextNode.of(cell.getTableRow().getRecord().getLawStatus())))
                 .addColumn(ColumnConfig.<Grundstueck>create("oereb", "ÖREB-Kataster").setShowTooltip(false)
                         .textAlign("left").setCellRenderer(cell -> {
                             HTMLElement badgesElement = div().element();
@@ -315,7 +355,7 @@ public class App implements EntryPoint {
 
                             return badgesElement;
                         }))
-                .addColumn(ColumnConfig.<Grundstueck>create("eigentuemer", "Eigentümberabfrage").setShowTooltip(false)
+                .addColumn(ColumnConfig.<Grundstueck>create("eigentuemer", "Eigentümerabfrage").setShowTooltip(false)
                         .textAlign("left").setCellRenderer(cell -> {
                             HTMLElement badgesElement = div().element();
                            
@@ -352,10 +392,17 @@ public class App implements EntryPoint {
     public class MySelectionHandler implements SelectionHandler {
         @Override
         public void onSelection(Object value) {
+        	
+        	console.log("MySelectionHandler");
+        	
             grundstuecke = new ArrayList<Grundstueck>();
             
             SuggestItem<SearchResult> item = (SuggestItem<SearchResult>) value;
             SearchResult result = (SearchResult) item.getValue();
+//            console.log("handler -- displayValue: " +item.getDisplayValue());
+//            HTMLInputElement el =(HTMLInputElement) suggestBox.getInputElement().element();
+//            console.log("handler -- element value: " + el.value);    
+
             
             RequestInit requestInit = RequestInit.create();
             Headers headers = new Headers();
